@@ -1,0 +1,126 @@
+---
+title: 'Receptor Abundance Estimation using SPECK: An Application to the GSE164378
+  Peripheral Blood Mononuclear Cells (PBMC) data'
+author: "Azka Javaid and H. Robert Frost"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+vignette: >
+  %\VignetteIndexEntry{SPECKVignette}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Load the SPECK package
+
+SPECK depends on functionalities from the Seurat, rsvd and Ckmeans.1d.dp packages. Loading SPECK will load these required packages. Seurat is also individually loaded in this vignette to facilitate access to downstream data visualization capabilities. The ggplot2 and gridExtra packages are loaded to enable graphical arrangement of downstream imputed abundance profiles.  
+
+```{r message=FALSE, warning=FALSE}
+library(SPECK)
+library(Seurat)
+library(ggplot2)
+library(gridExtra)
+```
+
+## Load a subset of the GSE164378 single cell RNA-sequencing (scRNA-seq) data
+
+A subset of 1000 samples from a human peripheral blood mononuclear cells (PBMC) scRNA-seq dataset, accessible using the Gene Expression Omnibus (GEO) at accession number GSE164378 and DOI: 10.1016/j.cell.2021.04.048 (Hao et al. 2021), is subsequently loaded. The transformation from the raw data files to this subset can be accessed at the `SPECK/data-raw/pbmc_data_processing.R` script. 
+
+```{r message=FALSE, warning=FALSE}
+data("pbmc.rna.mat")
+dim(pbmc.rna.mat)
+```
+
+## Execute the SPECK method 
+
+SPECK method is executed on the subset, `pbmc.rna.seurat` data, using the `SPECK()` function. The thresholded and reduced rank reconstructed output, which is a $m \times n$ matrix consisting of $m$ (i.e. 1000) samples and $n$ genes, can be accessed via the `thresholded.mat` component of the returned list. This matrix is then set to SPECK assay in the `pbmc.rna.seurat` object. 
+
+```{r message=FALSE, warning=FALSE}
+speck.full <- speck(counts.matrix = pbmc.rna.mat, rank.range.end = 100, 
+                    min.consec.diff = 0.01, rep.consec.diff = 2, 
+                    manual.rank = NULL, max.num.clusters = 4, 
+                    seed.rsvd = 1, seed.ckmeans = 2)
+
+speck.rank <- speck.full$rrr.rank
+paste("Rank: ", speck.rank, sep = "")
+
+plot(speck.full$eigenvalue.stdev, ylab = "Eigenvalue standard deviations", 
+xlab = "Rank range", main = paste("Selected rank (k=", speck.rank, ")", sep=""))
+abline(v = speck.rank, lty = 2, col = "red")
+
+head(speck.full$clust.num); table(speck.full$clust.num)
+
+speck.clust.max.prop <- speck.full$clust.max.prop
+head(speck.clust.max.prop) 
+#Receptors with proportion of samples with the specified
+#maximum number of clusters exceeding 50%:
+speck.clust.max.prop[speck.clust.max.prop[,"proportion.max.clust"] > 50, ]
+
+speck.output <- speck.full$thresholded.mat
+paste("# of samples in RRR object:", dim(speck.output)[1])
+paste("# of genes in RRR object:", dim(speck.output)[2])
+SPECK_assay <- CreateAssayObject(counts = t(speck.output))
+pbmc.rna.seurat <- CreateSeuratObject(counts = t(as.matrix(pbmc.rna.mat)))
+pbmc.rna.seurat[["SPECK"]] <- SPECK_assay
+```
+
+## Visualize estimated abundance profiles 
+
+Seurat's preprocessing workflow is next applied to the `pbmc.rna.seurat` object to enable downstream visualization. 
+
+```{r, message=FALSE, warning=FALSE}
+DefaultAssay(pbmc.rna.seurat) <- "RNA"
+pbmc.rna.seurat <- NormalizeData(pbmc.rna.seurat)
+pbmc.rna.seurat <- FindVariableFeatures(pbmc.rna.seurat, 
+                                        selection.method = "vst", 
+                                        nfeatures = 2000)
+all.genes <- rownames(pbmc.rna.seurat)
+pbmc.rna.seurat <- ScaleData(pbmc.rna.seurat, features = all.genes)
+pbmc.rna.seurat <- RunPCA(pbmc.rna.seurat, 
+                          features = VariableFeatures(object = pbmc.rna.seurat))
+pbmc.rna.seurat <- FindNeighbors(pbmc.rna.seurat, dims = 1:10)
+pbmc.rna.seurat <- FindClusters(pbmc.rna.seurat, resolution = 0.5)
+pbmc.rna.seurat <- RunUMAP(pbmc.rna.seurat, dims = 1:10)
+```
+
+Estimated abundance profiles are visualized on clustered data using the `FeaturePlot()` function. 
+
+```{r, fig.width=7, fig.height=9, message=FALSE, warning=FALSE}
+DefaultAssay(pbmc.rna.seurat) <- "RNA"
+p1 <- FeaturePlot(pbmc.rna.seurat, "CD14", cols = c("lightgrey", "#007ece")) + 
+  ggtitle("CD14 RNA")
+DefaultAssay(pbmc.rna.seurat) <- "SPECK"
+p2 <- FeaturePlot(pbmc.rna.seurat, "CD14", cols=c("lightgrey", "#E64B35CC")) +
+  ggtitle("CD14 SPECK")
+
+DefaultAssay(pbmc.rna.seurat) <- "RNA"
+p3 <- FeaturePlot(pbmc.rna.seurat, "CD79B", cols = c("lightgrey", "#007ece")) + 
+  ggtitle("CD79B RNA")
+DefaultAssay(pbmc.rna.seurat) <- "SPECK"
+p4 <- FeaturePlot(pbmc.rna.seurat, "CD79B", cols=c("lightgrey", "#E64B35CC")) + 
+  ggtitle("CD79B SPECK")
+
+DefaultAssay(pbmc.rna.seurat) <- "RNA"
+p5 <- FeaturePlot(pbmc.rna.seurat, "CD19", cols = c("lightgrey", "#007ece")) + 
+  ggtitle("CD19 RNA")
+DefaultAssay(pbmc.rna.seurat) <- "SPECK"
+p6 <- FeaturePlot(pbmc.rna.seurat, "CD19", cols=c("lightgrey", "#E64B35CC")) + 
+  ggtitle("CD19 SPECK")
+
+grid.arrange(p2, p1,
+             p4, p3, 
+             p6, p5,
+             nrow = 3)
+```
+
+
+
