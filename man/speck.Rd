@@ -16,14 +16,14 @@ speck(
 )
 }
 \arguments{
-\item{counts.matrix}{\eqn{m x n} scRNA-seq count matrix with \eqn{m} samples
+\item{counts.matrix}{\eqn{m x n} scRNA-seq counts matrix with \eqn{m} samples
 and \eqn{n} genes.}
 
 \item{rank.range.end}{Upper value of the rank for RRR.}
 
-\item{min.consec.diff}{Minimum difference in the rate of change between a pair of successive, eigenvalues standard deviation.}
+\item{min.consec.diff}{Minimum difference in the rate of change between a pair of successive standard deviation estimate.}
 
-\item{rep.consec.diff}{Frequency of the minimum difference in the rate of change between a pair of successive, eigenvalues standard deviation.}
+\item{rep.consec.diff}{Frequency of the minimum difference in the rate of change between a pair of successive standard deviation estimate.}
 
 \item{manual.rank}{Optional, user-specified upper value of the rank used
 for RRR as an alternative to automatically computed rank.}
@@ -39,7 +39,7 @@ for RRR as an alternative to automatically computed rank.}
   \item thresholded.mat - A \eqn{m x n} thresholded RRR matrix with \eqn{m} samples and \eqn{n} genes.
   \item rrr.mat - A \eqn{m x n} RRR matrix with \eqn{m} samples and \eqn{n} genes.
   \item rrr.rank - Automatically computed rank.
-  \item eigenvalue.stdev - A vector corresponding to eigenvalues standard deviation for rank computation.
+  \item component.stdev - A vector corresponding to standard deviations of non-centered sample principal components.
   \item clust.num - A vector of length \eqn{n} indicating the number of clusters identified by the
   \code{\link[=Ckmeans.1d.dp]{Ckmeans.1d.dp()}} algorithm for each gene.
   \item clust.max.prop - A vector of length \eqn{n} indicating the proportion of samples with the
@@ -61,14 +61,9 @@ speck.full <- speck(counts.matrix = data.mat, rank.range.end = 60,
 min.consec.diff = 0.01, rep.consec.diff = 2,
 manual.rank = NULL, max.num.clusters = 4,
 seed.rsvd = 1, seed.ckmeans = 2)
-print(speck.full$eigenvalue.stdev)
+print(speck.full$component.stdev)
 print(speck.full$rrr.rank)
 head(speck.full$clust.num); table(speck.full$clust.num)
-speck.clust.max.prop <- speck.full$clust.max.prop
-head(speck.clust.max.prop)
-# Receptors with proportion of samples with the specified
-# maximum number of clusters exceeding 50\%:
-speck.clust.max.prop[speck.clust.max.prop[,"proportion.max.clust"] > 50,]
 head(speck.full$clust.max.prop); table(speck.full$clust.max.prop)
 speck.output <- speck.full$thresholded.mat
 dim(speck.output); str(speck.output)

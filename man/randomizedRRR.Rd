@@ -18,9 +18,9 @@ randomizedRRR(
 
 \item{rank.range.end}{Upper value of the rank for RRR.}
 
-\item{min.consec.diff}{Minimum difference in the rate of change between a pair of successive, eigenvalues standard deviation.}
+\item{min.consec.diff}{Minimum difference in the rate of change between a pair of successive standard deviation estimate.}
 
-\item{rep.consec.diff}{Frequency of the minimum difference in the rate of change between a pair of successive, eigenvalues standard deviation.}
+\item{rep.consec.diff}{Frequency of the minimum difference in the rate of change between a pair of successive standard deviation estimate.}
 
 \item{manual.rank}{Optional, user-specified upper value of the rank used
 for RRR as an alternative to automatically computed rank.}
@@ -31,15 +31,15 @@ for RRR as an alternative to automatically computed rank.}
 \itemize{
   \item rrr.mat - A \eqn{m x n} RRR matrix.
   \item rrr.rank - Automatically computed rank.
-  \item eigenvalue.stdev - A vector corresponding to eigenvalues standard deviation for rank computation.
+  \item component.stdev - A vector corresponding to standard deviations of non-centered sample principal components.
 }
 }
 \description{
 Computes the rank and subsequent RRR of a \eqn{m x n} counts matrix. Log-normalization is first performed
 using the \code{\link[Seurat:NormalizeData]{Seurat::NormalizeData()}} function. RRR is next performed on the normalized \eqn{m x n}
 matrix using randomized Singular Value Decomposition with the \code{\link[rsvd:rsvd]{rsvd::rsvd()}} function. Estimated rank is selected via a
-construction of eigenvalues standard deviation, which are used in a subsequent rate of change computation
-where each successive value is compared to the previous to determine the rank at which the absolute value of the rate of change
+construction of the standard deviations of non-centered sample principal components, which are used in a subsequent rate of change computation
+where each successive standard deviation value is compared to the previous to determine the rank at which the absolute value of the rate of change
 between consecutive values is at least 0.01 for at least two value pairs.
 }
 \examples{
@@ -48,7 +48,7 @@ data.mat <- t(as.matrix(pbmc_small@assays$RNA@counts))
 rrr.object <- randomizedRRR(counts.matrix = data.mat, rank.range.end = 60,
 min.consec.diff = 0.01, rep.consec.diff = 2,
 manual.rank = NULL, seed.rsvd = 1)
-print(rrr.object$eigenvalue.stdev)
+print(rrr.object$component.stdev)
 print(rrr.object$rrr.rank)
 dim(rrr.object$rrr.mat); str(rrr.object$rrr.mat)
 }

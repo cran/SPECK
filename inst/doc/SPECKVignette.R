@@ -23,17 +23,12 @@ speck.full <- speck(counts.matrix = pbmc.rna.mat, rank.range.end = 100,
 speck.rank <- speck.full$rrr.rank
 paste("Rank: ", speck.rank, sep = "")
 
-plot(speck.full$eigenvalue.stdev, ylab = "Eigenvalue standard deviations", 
+plot(speck.full$component.stdev, ylab = "Stdev. of non-centered sample PCs", 
 xlab = "Rank range", main = paste("Selected rank (k=", speck.rank, ")", sep=""))
 abline(v = speck.rank, lty = 2, col = "red")
 
 head(speck.full$clust.num); table(speck.full$clust.num)
-
-speck.clust.max.prop <- speck.full$clust.max.prop
-head(speck.clust.max.prop) 
-#Receptors with proportion of samples with the specified
-#maximum number of clusters exceeding 50%:
-speck.clust.max.prop[speck.clust.max.prop[,"proportion.max.clust"] > 50, ]
+head(speck.full$clust.max.prop)
 
 speck.output <- speck.full$thresholded.mat
 paste("# of samples in RRR object:", dim(speck.output)[1])

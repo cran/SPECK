@@ -2,7 +2,7 @@ Package: SPECK
 Type: Package
 Title: Receptor Abundance Estimation using Reduced Rank Reconstruction
         and Clustered Thresholding
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("H. Robert", "Frost", email = "hildreth.r.frost@dartmouth.edu", role = c("aut")),
     person("Azka", "Javaid", email = "azka.javaid.gr@dartmouth.edu", role = c("aut", "cre")))
@@ -18,8 +18,8 @@ VignetteBuilder: knitr
 Depends: R (>= 2.10)
 Imports: Ckmeans.1d.dp, magrittr, rsvd, Seurat
 NeedsCompilation: no
-Packaged: 2022-10-11 14:11:44 UTC; azkajavaid
+Packaged: 2022-10-14 21:10:14 UTC; azkajavaid
 Author: H. Robert Frost [aut],
   Azka Javaid [aut, cre]
 Repository: CRAN
-Date/Publication: 2022-10-13 08:42:35 UTC
+Date/Publication: 2022-10-16 07:32:49 UTC
