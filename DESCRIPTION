@@ -2,7 +2,7 @@ Package: SPECK
 Type: Package
 Title: Receptor Abundance Estimation using Reduced Rank Reconstruction
         and Clustered Thresholding
-Version: 0.1.1
+Version: 1.0.0
 Authors@R: c(
     person("H. Robert", "Frost", email = "hildreth.r.frost@dartmouth.edu", role = c("aut")),
     person("Azka", "Javaid", email = "azka.javaid.gr@dartmouth.edu", role = c("aut", "cre")))
@@ -11,15 +11,14 @@ Description: Surface Protein abundance Estimation using CKmeans-based clustered 
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.1
-Suggests: ggplot2, gridExtra, knitr, Matrix, rmarkdown, SeuratObject,
-        usethis
+RoxygenNote: 7.2.3
+Suggests: ggplot2, gridExtra, knitr, rmarkdown, SeuratObject, usethis
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
-Imports: Ckmeans.1d.dp, magrittr, rsvd, Seurat
+Imports: Ckmeans.1d.dp, magrittr, Matrix (>= 1.6.1.1), rsvd, Seurat
 NeedsCompilation: no
-Packaged: 2022-10-14 21:10:14 UTC; azkajavaid
+Packaged: 2023-11-17 15:06:41 UTC; azkajavaid
 Author: H. Robert Frost [aut],
   Azka Javaid [aut, cre]
 Repository: CRAN
-Date/Publication: 2022-10-16 07:32:49 UTC
+Date/Publication: 2023-11-17 17:30:02 UTC

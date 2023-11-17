@@ -31,8 +31,8 @@ one cluster is present, then the RRR output corresponding to the nonzero element
 the cluster mean, is set to zero. All other values in the least and higher-valued clusters are retained.
 }
 \examples{
-library(SeuratObject)
-data.mat <- t(as.matrix(pbmc_small@assays$RNA@counts))
+set.seed(10)
+data.mat <- matrix(data = rbinom(n = 18400, size = 230, prob = 0.01), nrow = 80)
 rrr.object <- randomizedRRR(counts.matrix = data.mat, rank.range.end = 60,
 min.consec.diff = 0.01, rep.consec.diff = 2,
 manual.rank = NULL, seed.rsvd = 1)

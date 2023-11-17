@@ -22,8 +22,8 @@
 #' }
 #'
 #' @examples
-#' library(SeuratObject)
-#' data.mat <- t(as.matrix(pbmc_small@assays$RNA@counts))
+#' set.seed(10)
+#' data.mat <- matrix(data = rbinom(n = 18400, size = 230, prob = 0.01), nrow = 80)
 #' rrr.object <- randomizedRRR(counts.matrix = data.mat, rank.range.end = 60,
 #' min.consec.diff = 0.01, rep.consec.diff = 2,
 #' manual.rank = NULL, seed.rsvd = 1)
@@ -43,11 +43,11 @@ randomizedRRR <- function(counts.matrix, rank.range.end = 100, min.consec.diff =
   if (!is.null(manual.rank) && (manual.rank > rank.range.end)) {
     stop("Manually specified rank must be less than the high value of the specified rank.range.end parameter.")
   }
-  data.object <- CreateSeuratObject(counts = t(as.matrix(counts.matrix)))
+  data.object <- CreateSeuratObject(counts = Matrix(t(as.matrix(counts.matrix))))
   data.object <- NormalizeData(object = data.object, normalization.method = "LogNormalize", verbose = FALSE)
   val <- 0; initial <- 0; final <- 0;
   set.seed(seed.rsvd)
-  rsvd.res <- rsvd(t(as.matrix(data.object@assays$RNA@data)), k = rank.range.end)
+  rsvd.res <- rsvd(t(as.matrix(data.object@assays$RNA@layers$data)), k = rank.range.end)
   if (!is.null(manual.rank)) {
     xhat <- rsvd.res$u[, 1:manual.rank] %*% diag(rsvd.res$d[1:manual.rank]) %*% t(rsvd.res$v[, 1:manual.rank])
     rownames(xhat) <- colnames(data.object)
