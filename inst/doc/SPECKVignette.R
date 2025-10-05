@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -37,7 +37,7 @@ SPECK_assay <- CreateAssayObject(counts = t(speck.output))
 pbmc.rna.seurat <- CreateSeuratObject(counts = t(as.matrix(pbmc.rna.mat)))
 pbmc.rna.seurat[["SPECK"]] <- SPECK_assay
 
-## ---- message=FALSE, warning=FALSE--------------------------------------------
+## ----message=FALSE, warning=FALSE---------------------------------------------
 DefaultAssay(pbmc.rna.seurat) <- "RNA"
 pbmc.rna.seurat <- NormalizeData(pbmc.rna.seurat)
 pbmc.rna.seurat <- FindVariableFeatures(pbmc.rna.seurat, 
@@ -51,7 +51,7 @@ pbmc.rna.seurat <- FindNeighbors(pbmc.rna.seurat, dims = 1:10)
 pbmc.rna.seurat <- FindClusters(pbmc.rna.seurat, resolution = 0.5)
 pbmc.rna.seurat <- RunUMAP(pbmc.rna.seurat, dims = 1:10)
 
-## ---- fig.width=7, fig.height=9, message=FALSE, warning=FALSE-----------------
+## ----fig.width=7, fig.height=9, message=FALSE, warning=FALSE------------------
 DefaultAssay(pbmc.rna.seurat) <- "RNA"
 p1 <- FeaturePlot(pbmc.rna.seurat, "CD14", cols = c("lightgrey", "#007ece")) + 
   ggtitle("CD14 RNA")

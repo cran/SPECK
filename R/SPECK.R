@@ -24,7 +24,7 @@
 #'   \item rrr.rank - Automatically computed rank.
 #'   \item component.stdev - A vector corresponding to standard deviations of non-centered sample principal components.
 #'   \item clust.num - A vector of length \eqn{n} indicating the number of clusters identified by the
-#'   \code{\link[=Ckmeans.1d.dp]{Ckmeans.1d.dp()}} algorithm for each gene.
+#'   \code{\link[Ckmeans.1d.dp:Ckmeans.1d.dp]{Ckmeans.1d.dp::Ckmeans.1d.dp()}} algorithm for each gene.
 #'   \item clust.max.prop - A vector of length \eqn{n} indicating the proportion of samples with the
 #'   specified maximum number of clusters for each gene.
 #' }
